@@ -1,0 +1,2 @@
+# WScript
+windows scripts
