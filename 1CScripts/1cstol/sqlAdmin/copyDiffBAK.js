@@ -11,14 +11,17 @@ if (colDrives.length != 0) {
 }
 WshNetwork.MapNetworkDrive("T:","\\\\sirius\\backup$\\1C_ARCHIV\\1CSTOL\\STOLBASE",0,"WTC\\1carchiv","88881111");
 
+
 //CurDir = WshFSO.GetAbsolutePathName(WshShell.CurrentDirectory);
+//CurDir = "D:\SQLADMIN";
 CurDir = WshFSO.GetParentFolderName(WScript.ScriptFullName);
+
 
 var LogFile;
 var dt = new Date();
 var MsgDate = String(dt.getYear()) + "-" +( (dt.getMonth() > 9) ? String(dt.getMonth()+1) : ("0" + String(dt.getMonth()+1)) ) + "-" + ((dt.getDate() > 9) ? String(dt.getDate()) : ("0"+String(dt.getDate())) );
 
-var strLogFileName = CurDir + "\\LOGs\\FullBAKStol_" + MsgDate +".txt";	
+var strLogFileName = CurDir + "\\LOGs\\DiffBakStol_" + MsgDate +".txt";	
 
 // функция добавления строки в лог
 function LogWrite(aTextLine){
@@ -112,14 +115,14 @@ var f, fc, s, vDate;
 
 
 OpenLogFile();
-LogWrite("Start copyBAK...");
-LogWrite("Delete all BUT FIVE last full copies from Sirius");
+LogWrite("Start copyDiffBAK...");
+LogWrite("Delete all BUT FIFTEEN last full copies from Sirius");
 CloseLogFile();
 
 
 try{
 	// Delete all BUT FIVE last full copies from sirius
-	WshShell.Run(CurDir + "\\DelFiles.exe \"T:\" 5 BAK",2,1);
+	WshShell.Run(CurDir + "\\DelFiles.exe \"T:\\DIFF\" 15 BAK",2,1);
 
 }catch(e){
 	// error
@@ -127,11 +130,11 @@ try{
 
 
 // Get the last created file on D:
-sLastFileNameBAK1 = GetLastFileName("D:\\SQL_COPY\\FULL",".BAK");
+sLastFileNameBAK1 = GetLastFileName("D:\\SQL_COPY\\DIFF",".BAK");
 
 
 // Get the last created file on sirius
-sLastFileNameBAK2 = GetLastFileName("T:\\",".BAK");
+sLastFileNameBAK2 = GetLastFileName("T:\\DIFF",".BAK");
 
 if(sLastFileNameBAK1 != sLastFileNameBAK2){
 
@@ -141,7 +144,7 @@ if(sLastFileNameBAK1 != sLastFileNameBAK2){
 
 	// Copy the last full copy to sirius
 	try {
-		WshFSO.CopyFile("D:\\SQL_COPY\\FULL\\"+sLastFileNameBAK1, "T:\\", 1); // затереть старый, если есть
+		WshFSO.CopyFile("D:\\SQL_COPY\\DIFF\\"+sLastFileNameBAK1, "T:\\DIFF\\", 1); // затереть старый, если есть
 	}catch(e){
 		// error
 		OpenLogFile();
